@@ -1,12 +1,34 @@
-"""BenOps RCA Agent — main polling loop."""
+"""BenOps RCA Agent — main polling loop.
+
+Usage:
+  python -m agent.main            # normal polling mode
+  python -m agent.main --test     # inject a fake faulted job and exit
+"""
 
 import sys
 import time
 from datetime import datetime
 
 from agent import ai_analyst, context_collector, jira_creator, priority_checker, slack_notifier
-from agent.failure_listener import FailureListener
+from agent.failure_listener import FailureListener, FaultedJob
 from config.settings import settings
+
+
+def _make_test_job() -> FaultedJob:
+    return FaultedJob(
+        key="TEST-JOB-001",
+        process_name="BCBS_MA_NewHireEnrollment",
+        error_message=(
+            "System.Exception: Selector not found. "
+            "Element 'aaname:Submit Enrollment' could not be found within timeout. "
+            "at UiPath.Core.Activities.ScopeActivity.OnFaulted"
+        ),
+        start_time=datetime.now().isoformat(),
+        end_time=datetime.now().isoformat(),
+        machine_name="GSTO-FR5-APP002",
+        robot_name="benops-robot-01",
+        folder_key=settings.orchestrator_folder_key,
+    )
 
 
 def process_job(job, listener_ref=None):
@@ -73,5 +95,18 @@ def run():
         time.sleep(settings.poll_interval)
 
 
+def run_test():
+    print("[Test] ⚡ Running end-to-end test with mock faulted job...")
+    ai_analyst._load_skill_knowledge()
+    job = _make_test_job()
+    print(f"[Test] Mock job: {job.process_name}")
+    print(f"[Test] Error: {job.error_message[:80]}...\n")
+    process_job(job)
+    print("\n[Test] ✅ Test complete. Check your Slack DM and Jira.")
+
+
 if __name__ == "__main__":
-    run()
+    if "--test" in sys.argv:
+        run_test()
+    else:
+        run()
