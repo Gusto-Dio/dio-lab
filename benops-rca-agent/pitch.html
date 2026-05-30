@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BenOps RCA Agent — Pitch</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    padding: 40px 48px;
+    max-width: 1020px;
+    margin: 0 auto;
+  }
+
+  /* ── HEADER ── */
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #a855f7;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #f8fafc;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  h1 span { color: #a855f7; }
+  .description {
+    font-size: 15px;
+    color: #94a3b8;
+    line-height: 1.7;
+    max-width: 640px;
+    margin-bottom: 28px;
+  }
+
+  /* ── PROBLEM / SOLUTION PILLS ── */
+  .pills {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .pill-problem { background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; }
+  .pill-solution{ background: #1a0533; border: 1px solid #a855f7; color: #d8b4fe; }
+  .pill-impact  { background: #052e16; border: 1px solid #22c55e; color: #86efac; }
+
+  /* ── DIVIDER ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #334155;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #1e293b;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .steps {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin-bottom: 40px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 130px;
+    flex: 1;
+  }
+
+  .step-top {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  .step-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    border: 2px solid;
+  }
+  .step-connector {
+    flex: 1;
+    height: 2px;
+  }
+  .step-item:last-child .step-connector { display: none; }
+
+  .step-body {
+    text-align: center;
+    padding: 12px 8px 0;
+    width: 100%;
+  }
+  .step-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 4px;
+  }
+  .step-desc {
+    font-size: 10px;
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  .s1 .step-circle { background: #450a0a; border-color: #ef4444; }
+  .s1 .step-connector { background: linear-gradient(to right, #ef4444, #3b82f6); }
+  .s2 .step-circle { background: #0f2240; border-color: #3b82f6; }
+  .s2 .step-connector { background: linear-gradient(to right, #3b82f6, #3b82f6); }
+  .s3 .step-circle { background: #0f2240; border-color: #3b82f6; }
+  .s3 .step-connector { background: linear-gradient(to right, #3b82f6, #a855f7); }
+  .s4 .step-circle { background: #1a0533; border-color: #a855f7; }
+  .s4 .step-connector { background: linear-gradient(to right, #a855f7, #f59e0b); }
+  .s5 .step-circle { background: #1c1008; border-color: #f59e0b; }
+
+  /* ── PRIORITY CONFIG PANEL ── */
+  .priority-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 20px;
+    margin-bottom: 0;
+    align-items: start;
+  }
+  .priority-config {
+    background: #0f172a;
+    border: 1px solid #f59e0b;
+    border-left: 3px solid #f59e0b;
+    border-radius: 10px;
+    padding: 18px 18px;
+  }
+  .priority-config-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #f59e0b;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .priority-config-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  .priority-config-desc {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .priority-sources {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .priority-source {
+    font-size: 11px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .priority-source span { color: #64748b; font-size: 10px; }
+  .priority-example {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #1e293b;
+  }
+  .priority-row {
+    font-size: 10px;
+    color: #64748b;
+    line-height: 1.7;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+  .dot-high { color: #ef4444; font-size: 8px; }
+  .dot-std  { color: #475569; font-size: 8px; }
+  .priority-note {
+    font-size: 10px;
+    color: #475569;
+    margin-top: 10px;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ── BRANCH ── */
+  .branch-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 40px;
+    margin-top: 8px;
+  }
+  .branch-arrow {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    padding: 5px 0;
+    border-radius: 6px;
+  }
+  .branch-high  { color: #fca5a5; background: #3b0808; border: 1px solid #ef4444; }
+  .branch-std   { color: #93c5fd; background: #0a1628; border: 1px solid #3b82f6; }
+  .branch-card {
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid;
+  }
+  .branch-card-high { background: #021a0d; border-color: #166534; }
+  .branch-card-std  { background: #020f1f; border-color: #0369a1; }
+  .branch-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .branch-card-high .branch-label { color: #4ade80; }
+  .branch-card-std  .branch-label { color: #38bdf8; }
+  .branch-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 5px;
+    line-height: 1.4;
+  }
+  .branch-row {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.7;
+  }
+  .branch-row strong { color: #94a3b8; }
+
+  /* ── OUTPUTS ── */
+  .outputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .output-card {
+    border-radius: 10px;
+    padding: 16px 18px;
+    border: 1px solid;
+  }
+  .output-jira  { background: #021a0d; border-color: #166534; }
+  .output-slack { background: #020f1f; border-color: #0369a1; }
+  .output-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .output-jira .output-label  { color: #4ade80; }
+  .output-slack .output-label { color: #38bdf8; }
+  .output-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .output-row {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.7;
+  }
+  .output-row strong { color: #94a3b8; }
+
+  /* ── IMPACT BAR ── */
+  .impact-bar {
+    display: flex;
+    gap: 1px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .impact-tile {
+    flex: 1;
+    padding: 16px 12px;
+    text-align: center;
+    background: #1e293b;
+  }
+  .impact-tile:first-child { border-radius: 10px 0 0 10px; }
+  .impact-tile:last-child  { border-radius: 0 10px 10px 0; }
+  .impact-num {
+    font-size: 22px;
+    font-weight: 800;
+    color: #a855f7;
+    line-height: 1;
+  }
+  .impact-txt {
+    font-size: 10px;
+    color: #475569;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── AWARD TAGS ── */
+  .awards {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .award {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+  .award-ai  { border-color: #7c3aed; color: #d8b4fe; background: #1a0533; }
+  .award-cx  { border-color: #0369a1; color: #7dd3fc; background: #020f1f; }
+
+  /* ── SUBMISSION INFO ── */
+  .submission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 0;
+  }
+  .sub-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 12px 16px;
+  }
+  .sub-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #475569;
+    margin-bottom: 5px;
+  }
+  .sub-value {
+    font-size: 12px;
+    color: #cbd5e1;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .sub-value span {
+    display: inline-block;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin: 2px 3px 2px 0;
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 400;
+  }
+</style>
+</head>
+<body>
+
+<div class="tag">Benefits Hackathon — BizTech RPA</div>
+<h1>BenOps <span>RCA Agent</span></h1>
+<p class="description">
+  When a benefits enrollment bot fails in Orchestrator, an AI agent automatically detects the failure,
+  collects the execution logs, reads the workflow code, and generates a full root cause analysis —
+  creating a pre-diagnosed Jira ticket and alerting the team on Slack in under 60 seconds.
+  No manual investigation. No hours lost. No enrollments stuck for days.
+</p>
+
+<div class="pills">
+  <div class="pill pill-problem">Today: 2+ hours manual investigation</div>
+  <div class="pill pill-solution">With RCA Agent: &lt;60 seconds</div>
+  <div class="pill pill-impact">Enrollments resolved same day</div>
+</div>
+
+<div class="section-label">How it works</div>
+
+<div class="steps">
+  <div class="step-item s1">
+    <div class="step-top">
+      <div class="step-circle">💥</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step-body">
+      <div class="step-name">Bot Fails</div>
+      <div class="step-desc">Job goes Faulted in Orchestrator</div>
+    </div>
+  </div>
+  <div class="step-item s2">
+    <div class="step-top">
+      <div class="step-circle">👁</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step-body">
+      <div class="step-name">Listener Detects</div>
+      <div class="step-desc">Polls Orchestrator every 60s</div>
+    </div>
+  </div>
+  <div class="step-item s3">
+    <div class="step-top">
+      <div class="step-circle">📦</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step-body">
+      <div class="step-name">Context Collected</div>
+      <div class="step-desc">Logs + XAML code + PR history</div>
+    </div>
+  </div>
+  <div class="step-item s4">
+    <div class="step-top">
+      <div class="step-circle">🤖</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step-body">
+      <div class="step-name">Claude Analyzes</div>
+      <div class="step-desc">Root cause + fix suggestion</div>
+    </div>
+  </div>
+  <div class="step-item s5">
+    <div class="step-top">
+      <div class="step-circle">🎯</div>
+    </div>
+    <div class="step-body">
+      <div class="step-name">Priority Check</div>
+      <div class="step-desc">Is this a high-priority process?</div>
+    </div>
+  </div>
+</div>
+
+<div class="priority-layout">
+  <div class="branch-container" style="margin-bottom: 0;">
+    <div>
+      <div class="branch-arrow branch-high">⚡ HIGH PRIORITY</div>
+      <div class="branch-card branch-card-high">
+        <div class="branch-label">Jira Ticket — auto-created + Slack alert</div>
+        <div class="branch-title">[RCA] BCBS_MA_NewHireEnrollment — portal_change</div>
+        <div class="branch-row">
+          <strong>Root cause:</strong> Selector mismatch on EnterMemberInformation — carrier updated portal<br>
+          <strong>Suggested fix:</strong> Update aaname selector on line 142<br>
+          <strong>Severity:</strong> HIGH · → Ticket: BT-73001
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="branch-arrow branch-std">📣 STANDARD PROCESS</div>
+      <div class="branch-card branch-card-std">
+        <div class="branch-label">Slack only — #benops-rpa-dev</div>
+        <div class="branch-title">[BOT ALERT] UHC_SAM_MemberUpdates failed</div>
+        <div class="branch-row">
+          <strong>Cause:</strong> network_timeout<br>
+          <strong>File:</strong> InitAllApplications.xaml:88<br>
+          <strong>Note:</strong> Non-priority process — no ticket opened
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="priority-config">
+    <div class="priority-config-label">🎯 Priority Check</div>
+    <div class="priority-config-title">How are priorities defined?</div>
+    <div class="priority-config-desc">
+      A configurable list defines which processes are high-priority.
+      The agent checks it at runtime — no code change needed to update classifications.
+    </div>
+    <div class="priority-sources">
+      <div class="priority-source">🗂 <span>Orchestrator Asset</span> (recommended)</div>
+      <div class="priority-source">📄 <span>JSON / config file on VM</span></div>
+      <div class="priority-source">📊 <span>Google Sheet (shared with leads)</span></div>
+    </div>
+    <div class="priority-example">
+      <div class="priority-row"><span class="dot-high">●</span> BCBS_MA_NewHireEnrollment</div>
+      <div class="priority-row"><span class="dot-high">●</span> BSCA_GroupSubmissions_MemberLevel</div>
+      <div class="priority-row"><span class="dot-high">●</span> CoveredCal_NewHireEnrollment</div>
+      <div class="priority-row"><span class="dot-std">●</span> UHC_SAM_MemberUpdates</div>
+      <div class="priority-row"><span class="dot-std">●</span> Beam_MemberUpdates</div>
+    </div>
+    <div class="priority-note">
+      When a process changes priority, update the list — the agent adapts immediately on the next run.
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Impact</div>
+
+<div class="impact-bar">
+  <div class="impact-tile"><div class="impact-num">~2h</div><div class="impact-txt">Manual investigation today</div></div>
+  <div class="impact-tile"><div class="impact-num">&lt;60s</div><div class="impact-txt">With RCA Agent</div></div>
+  <div class="impact-tile"><div class="impact-num">days→min</div><div class="impact-txt">Time to diagnosis</div></div>
+  <div class="impact-tile"><div class="impact-num">4 of 5</div><div class="impact-txt">APIs already in use</div></div>
+</div>
+
+<div class="awards">
+  <div class="award award-ai">🏆 Best Use of AI</div>
+  <div class="award award-cx">🏆 Best Impact for CX</div>
+</div>
+
+<div class="section-label" style="margin-top: 36px;">Submission Info</div>
+
+<div class="submission-grid">
+  <div class="sub-card"><div class="sub-label">Submitter's Team</div><div class="sub-value">BizTech RPA</div></div>
+  <div class="sub-card"><div class="sub-label">Teammates Needed</div><div class="sub-value">2 – 4 people</div></div>
+  <div class="sub-card"><div class="sub-label">Teams / Areas Impacted</div><div class="sub-value"><span>BenOps</span><span>CX</span><span>Benefits Engineering</span></div></div>
+  <div class="sub-card"><div class="sub-label">Roles Needed</div><div class="sub-value"><span>Engineering</span><span>PM (optional)</span></div></div>
+</div>
+
+</body>
+</html>

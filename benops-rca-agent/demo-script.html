@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BenOps RCA Agent — Demo Script</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f1117; color: #e2e8f0; padding: 32px; min-height: 100vh; }
+  h1 { text-align: center; font-size: 22px; font-weight: 700; color: #f8fafc; margin-bottom: 6px; }
+  .subtitle { text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 36px; }
+  .timeline { display: flex; flex-direction: column; gap: 0; max-width: 820px; margin: 0 auto; }
+  .step { display: grid; grid-template-columns: 72px 24px 1fr; gap: 0 16px; position: relative; }
+  .step-time { text-align: right; padding-top: 14px; font-size: 11px; font-weight: 700; color: #64748b; white-space: nowrap; }
+  .step-track { display: flex; flex-direction: column; align-items: center; }
+  .dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid; flex-shrink: 0; margin-top: 12px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; z-index: 1; }
+  .line { width: 2px; flex: 1; min-height: 16px; }
+  .step:last-child .line { display: none; }
+  .step-context  .dot { background: #1e293b; border-color: #64748b; color: #64748b; }
+  .step-context  .line { background: #1e293b; }
+  .step-trigger  .dot { background: #7f1d1d; border-color: #ef4444; color: #fca5a5; }
+  .step-trigger  .line { background: #334155; }
+  .step-agent    .dot { background: #2d1b69; border-color: #a855f7; color: #d8b4fe; }
+  .step-agent    .line { background: #334155; }
+  .step-result   .dot { background: #14532d; border-color: #22c55e; color: #86efac; }
+  .step-result   .line { background: #334155; }
+  .step-impact   .dot { background: #1e3a5f; border-color: #3b82f6; color: #93c5fd; }
+  .step-impact   .line { background: #334155; }
+  .step-content { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 14px 18px; margin-bottom: 12px; }
+  .step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .step-title { font-size: 13px; font-weight: 700; color: #f1f5f9; }
+  .step-duration { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; background: #0f172a; color: #64748b; margin-left: auto; }
+  .script-block { background: #0f172a; border-left: 3px solid #334155; border-radius: 4px; padding: 10px 14px; font-size: 12px; color: #cbd5e1; font-style: italic; line-height: 1.6; margin-bottom: 10px; }
+  .action-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .action-list li { font-size: 11px; color: #94a3b8; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+  .action-list li::before { content: '→'; color: #475569; flex-shrink: 0; margin-top: 1px; }
+  .terminal { background: #020617; border: 1px solid #1e293b; border-radius: 8px; padding: 12px 16px; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 11px; line-height: 1.8; margin-top: 10px; }
+  .t-prompt { color: #22c55e; } .t-dim { color: #334155; } .t-info { color: #60a5fa; } .t-warn { color: #f59e0b; } .t-ok { color: #22c55e; } .t-purple { color: #a855f7; } .t-white { color: #e2e8f0; }
+  .result-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .preview-card { border-radius: 8px; padding: 10px 12px; font-size: 11px; line-height: 1.6; }
+  .preview-jira { background: #0d2818; border: 1px solid #166534; }
+  .preview-slack { background: #0a1e2e; border: 1px solid #0369a1; }
+  .preview-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .preview-jira .preview-label { color: #4ade80; } .preview-slack .preview-label { color: #38bdf8; }
+  .preview-title { font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
+  .preview-body  { color: #94a3b8; }
+  .preview-field { color: #64748b; font-size: 10px; } .preview-value { color: #cbd5e1; font-size: 10px; }
+  .awards { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+  .award { display: flex; align-items: center; gap: 6px; background: #1e293b; border: 1px solid #334155; border-radius: 20px; padding: 6px 12px; font-size: 11px; font-weight: 600; }
+  .award-ai { border-color: #7c3aed; color: #d8b4fe; } .award-cx { border-color: #0284c7; color: #7dd3fc; } .award-eng { border-color: #15803d; color: #86efac; }
+  .divider { border: none; border-top: 1px solid #1e293b; margin: 4px 0 16px; max-width: 820px; margin-left: auto; margin-right: auto; }
+  .setup-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-top: 8px; }
+  .setup-item { background: #0f172a; border: 1px solid #1e293b; border-radius: 6px; padding: 8px 12px; font-size: 11px; color: #94a3b8; display: flex; align-items: center; gap: 8px; }
+  .setup-item::before { content: '☑'; color: #22c55e; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<h1>BenOps RCA Agent — Demo Script</h1>
+<p class="subtitle">Hackathon presentation · ~3 minutes · Live on GSTO-FR5-APP002</p>
+<div class="timeline">
+  <div class="step step-context">
+    <div class="step-time">0:00</div>
+    <div class="step-track"><div class="dot">1</div><div class="line"></div></div>
+    <div class="step-content">
+      <div class="step-header"><div class="step-title">Set the Stage</div><div class="step-duration">~30s</div></div>
+      <div class="script-block">"Today, when a benefits enrollment bot fails in Orchestrator, an engineer has to investigate manually — reading logs, reviewing XAML code, checking PR history. That takes hours. And depending on the ticket queue, the enrollment can stay broken for days — meaning the employee doesn't have their health coverage."</div>
+      <ul class="action-list"><li>Show Orchestrator dashboard with a running (or recently faulted) job</li><li>Keep it brief — the pain is familiar to everyone in the room</li></ul>
+    </div>
+  </div>
+  <div class="step step-trigger">
+    <div class="step-time">0:30</div>
+    <div class="step-track"><div class="dot">2</div><div class="line"></div></div>
+    <div class="step-content">
+      <div class="step-header"><div class="step-title">Trigger the Failure</div><div class="step-duration">~20s</div></div>
+      <div class="script-block">"Let me show you what happens now. I'm going to trigger a bot run that will fail — same kind of failure we see in production."</div>
+      <ul class="action-list"><li>Trigger test job in Orchestrator (process configured to fail with a known error)</li><li>Show job status changing to Faulted — let judges see it happen live</li><li>Start the RCA Agent script in the VM terminal</li></ul>
+    </div>
+  </div>
+  <div class="step step-agent">
+    <div class="step-time">0:50</div>
+    <div class="step-track"><div class="dot">3</div><div class="line"></div></div>
+    <div class="step-content">
+      <div class="step-header"><div class="step-title">Agent Working — Live Terminal</div><div class="step-duration">~60s</div></div>
+      <div class="script-block">"The agent detected the failure automatically. Watch what it does next."</div>
+      <div class="terminal">
+        <span class="t-prompt">$</span> <span class="t-white">python rca_agent.py</span><br>
+        <span class="t-dim">──────────────────────────────────────────</span><br>
+        <span class="t-info">[*] Polling Orchestrator for faulted jobs...</span><br>
+        <span class="t-warn">[!] Found: BCBS_MA_NewHireEnrollment — Job #500R7000009XABC</span><br>
+        <span class="t-info">[*] Collecting execution logs...</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-ok">done</span><br>
+        <span class="t-info">[*] Fetching XAML from GitHub (Process.xaml)...</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-ok">done</span><br>
+        <span class="t-info">[*] Reading last 3 merged PRs for this process...</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-ok">done</span><br>
+        <span class="t-info">[*] Sending context to Claude for analysis...</span><br>
+        <span class="t-purple">[AI] Root cause identified: portal_change</span><br>
+        <span class="t-purple">[AI] Selector mismatch at EnterMemberInformation.xaml:142</span><br>
+        <span class="t-purple">[AI] Suggested fix: update aaname selector — portal updated 2026-06-03</span><br>
+        <span class="t-info">[*] Creating Jira ticket...</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-ok">BT-73001</span><br>
+        <span class="t-info">[*] Sending Slack notification...</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-ok">done</span><br>
+        <span class="t-dim">──────────────────────────────────────────</span><br>
+        <span class="t-ok">[✓] Completed in 47 seconds.</span>
+      </div>
+    </div>
+  </div>
+  <div class="step step-result">
+    <div class="step-time">1:50</div>
+    <div class="step-track"><div class="dot">4</div><div class="line"></div></div>
+    <div class="step-content">
+      <div class="step-header"><div class="step-title">Show the Output — Live</div><div class="step-duration">~30s</div></div>
+      <div class="script-block">"Here's the Jira ticket — created automatically, root cause already written. And here's the Slack message that went to the team channel at the same time."</div>
+      <div class="result-preview">
+        <div class="preview-card preview-jira">
+          <div class="preview-label">Jira — auto-created</div>
+          <div class="preview-title">[RCA-AUTO] BCBS_MA_NewHireEnrollment — portal_change</div>
+          <div class="preview-body" style="margin: 6px 0;">
+            <span class="preview-field">Root cause: </span><span class="preview-value">Selector mismatch on EnterMemberInformation step. Carrier updated portal on 2026-06-03.</span><br>
+            <span class="preview-field">Transactions: </span><span class="preview-value">500R7000009XABC</span><br>
+            <span class="preview-field">Suggested fix: </span><span class="preview-value">Update aaname selector line 142</span><br>
+            <span class="preview-field">Severity: </span><span class="preview-value">HIGH</span>
+          </div>
+        </div>
+        <div class="preview-card preview-slack">
+          <div class="preview-label">Slack — #benops-rpa-alerts</div>
+          <div class="preview-title">[BOT FAILURE] BCBS_MA_NewHireEnrollment</div>
+          <div class="preview-body" style="margin: 6px 0; color: #94a3b8; font-size: 11px; line-height: 1.6;">
+            Cause: portal_change<br>File: EnterMemberInformation.xaml:142<br>Severity: HIGH · 1 transaction<br>
+            → Ticket: <span style="color:#38bdf8;">BT-73001</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="step step-impact">
+    <div class="step-time">2:20</div>
+    <div class="step-track"><div class="dot">5</div><div class="line"></div></div>
+    <div class="step-content">
+      <div class="step-header"><div class="step-title">Land the Impact</div><div class="step-duration">~30s</div></div>
+      <div class="script-block">"What just took 47 seconds used to take 2+ hours of manual investigation — and the ticket would sit in the queue for days before anyone even looked at it. With the RCA Agent, the engineer receives a pre-diagnosed ticket and goes straight to the fix. Enrollments that were broken for a week now get resolved the same day."</div>
+      <ul class="action-list"><li>Close with: "All dependencies — Orchestrator, GitHub, Jira, Slack — already in use by the team. The only new piece is the Claude API."</li><li>Open for questions</li></ul>
+      <div class="awards">
+        <div class="award award-ai">Best Use of AI</div>
+        <div class="award award-cx">Best Impact for CX</div>
+        <div class="award award-eng">Best Engineering Impact</div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="divider">
+<div style="max-width: 820px; margin: 0 auto;">
+  <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #475569; margin-bottom: 10px; text-align: center;">Pre-Demo Setup Checklist (VM)</div>
+  <div class="setup-grid">
+    <div class="setup-item">pip install anthropic requests</div>
+    <div class="setup-item">ANTHROPIC_API_KEY set</div>
+    <div class="setup-item">ORCHESTRATOR_TOKEN set</div>
+    <div class="setup-item">JIRA_TOKEN set</div>
+    <div class="setup-item">SLACK_TOKEN set</div>
+    <div class="setup-item">Test job configured to fail</div>
+    <div class="setup-item">Jira + Slack open in browser</div>
+    <div class="setup-item">Orchestrator tab open</div>
+  </div>
+</div>
+</body>
+</html>
