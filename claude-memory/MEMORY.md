@@ -43,6 +43,7 @@ Ticket aberto → tem `project_*.md`. Ticket fechado → deletar o project file;
 - [Skills bundle instalado](reference_benops_skills_bundle.md) — /benops-triage-agent, /uipath-migration-repair, /uipath-test-cases-from-ticket
 - [Contatos prioritários](reference_contacts.md) — Slack IDs de Sri, Oscar, Ahsen, Harinath + canal C0ANAPHL1NE
 - [dio-lab workspace](reference_dio_lab.md) — repo Gusto-Dio/dio-lab para brainstorms, specs e backup de memória
+- [Notion workspace docs](https://github.com/Gusto-Dio/dio-lab/tree/main/notion-workspace) — IDs, databases, skills, histórico do Hub BenOps e continuidade de sessão (`notion-workspace/` no dio-lab)
 
 ---
 

@@ -73,12 +73,12 @@ metadata:
 
 ---
 
-## BT-73253 — UHC_SamX_GroupSubmissions_Renewal_Modern (NOVO)
-- **Status: Scheduled — aguardando trabalho**
-- Branch: `BT-73075-UHC-SamX-Renewal-debuggerapi-fix` (criada a partir do develop)
-- Fix: `InteractionMode="DebuggerApi"` → `Simulate` em NClicks do `InitEnvironment.xaml` (linhas 150, 218, 233)
-- Relacionado a: BT-73075 (seletores ProcessLayer) — tickets separados pois são bugs distintos
-- HTML do portal UHC home page precisa ser avaliado para confirmar seletores CV ainda válidos
+## BT-73253 — UHC_SamX_GroupSubmissions_Renewal_Modern
+- **Status: Em teste via Studio — aguardando resultado**
+- Branch: `BT-73075-UHC-SamX-Renewal-debuggerapi-fix`
+- Fix 1 (DONE): `InteractionMode="DebuggerApi"` → `Simulate` em 11 ocorrências (4 arquivos)
+- Fix 2 (DONE): RetryScope(5x,3s) + NCheckState(15s) + elementFound em 8 NClicks de navegação (root + Framework InitEnvironment.xaml)
+- Próximo: PR após teste Studio passar
 
 ---
 
