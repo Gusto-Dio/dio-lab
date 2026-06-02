@@ -7,7 +7,7 @@ metadata:
   originSessionId: e63eaeb7-a294-498d-8d21-15aa2451fdd6
 ---
 
-# Estado do trabalho — atualizado 2026-06-02 (sessão)
+# Estado do trabalho — atualizado 2026-06-02 (sessão tarde)
 
 ---
 
@@ -29,6 +29,9 @@ metadata:
 | #2691 | BT-72268 | Anthem_Terminations — Gusto_Benefits 1.550.0 bump (7.0.1) | 2026-05-20 |
 | #2705 | BT-72337/BT-72126 | BSCA_NewHireEnrollment — benefit_type ProperCase fix + lib 1.550.1 (7.0.1) | 2026-05-27 |
 | #2730 | BT-72337/BT-72410 | BSCA_GroupSubmissions_MemberLevel — Gusto_Benefits 1.550.3 (v6.2.2) | 2026-05-28 merged, em Prod |
+| #2741 | BT-72272 | Gusto_Benefits 1.550.8 — SearchForGroup CoveredCal race condition fix | 2026-06-02 |
+| #2742 | BT-72297 | BCBS_IL_GroupSubmissions_MemberLevel_Modern — portalPlan regex + dep add skip fix (v2.1.2) | 2026-06-02 |
+| #2743 | BT-72297 | BCBS_TX_GroupSubmissions_MemberLevel_Modern — portalPlan regex + dep add skip fix (v2.1.3) | 2026-06-02 |
 
 ---
 
@@ -55,9 +58,9 @@ metadata:
 
 ## BT-72272 — CoveredCal_Terminations (AGUARDANDO REVIEW)
 
-### PRs abertas — merge order obrigatório
-1. **PR #2741 — Library** `BT-72272-Gusto-Benefits-CoveredCal-SearchForGroup-fix` → aguardando review Oscar/Hari
-2. **PR #2699 — Processo** `BT-72272-CoveredCal-Terminations-fix` → Buildkite passa após merge da #2741
+### PRs
+1. **PR #2741 — Library** — MERGED 2026-06-02 ✅
+2. **PR #2699 — Processo** `BT-72272-CoveredCal-Terminations-fix` → aguardando Buildkite + review
 
 ### Estado do Staging (2026-06-02)
 - Library `Gusto_Benefits 1.550.8` publicada no Staging Libraries feed ✅
@@ -97,26 +100,13 @@ metadata:
 
 ---
 
-## BT-72297 — BCBS_TX/IL GroupSubmissions MemberLevel (AGUARDANDO REVIEW)
+## BT-72297 — BCBS_TX/IL GroupSubmissions MemberLevel
 
-### PRs abertas (branches separadas por processo)
-- **PR #2742 — BCBS_IL:** https://github.com/Gusto/biztech-uipath-rpa/pull/2742
-  - Branch: `BT-72297-BCBS-IL-GroupSubmissions-no-updates-fix`
-  - Processo: `BCBS_IL_GroupSubmissions_MemberLevel_Modern v2.1.2`
-  - Staging: publicado ✅ (release 373891)
-  - Testes: 5 transações IL com sucesso (a0mR700000EhSYsIAN, Ej977IAB, EhFuzIAF, EXleQIAT, EWT22IAH)
-- **PR #2743 — BCBS_TX:** https://github.com/Gusto/biztech-uipath-rpa/pull/2743
-  - Branch: `BT-72297-BCBS-TX-GroupSubmissions-no-updates-fix`
-  - Processo: `BCBS_TX_GroupSubmissions_MemberLevel_Modern v2.1.3`
-  - Staging: publicado ✅ (release 373892)
-  - Testes: 1 transação TX com sucesso (a0mR700000Eb7SIIAZ)
-
-### Fix
-- Root cause: `portalPlan = Regex.Match(currentCoverage, " [A-Z]\d{3}[A-Z]{3}").Value`
-  - Se regex falha → `portalPlan = ""` → `String.Contains("") = True` → skip silencioso
-  - Também: dep add com plano igual era incorretamente ignorado
-- Guards adicionados: `Not String.IsNullOrEmpty(portalPlan)` + `(dependentDetails Is Nothing OrElse dependentDetails.Length = 0)`
-- Nota: itens testados são "Same Carrier, NO Plan Changes" (regressão) — itens com dep add/plan change pendentes de validação futura
+- PRs #2742 (IL v2.1.2) e #2743 (TX v2.1.3) mergiadas em 2026-06-02
+- Fix: portalPlan regex + dep add silent skip
+- **PR #2744 — BCBS_TX v2.1.4** — aberta, aguardando review Ahsen
+  - Branch: `BT-72297-BCBS-TX-GroupSubmissions-system-activities-bump`
+  - Fix: `UiPath.System.Activities [25.4.2]` → `[25.10.5]` — deployment pipeline falhava com XamlObjectWriterException (RetryScope.LogRetriedExceptions ausente em 25.4.2)
 
 ---
 
