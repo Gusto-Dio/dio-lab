@@ -13,7 +13,6 @@ Ticket aberto → tem `project_*.md`. Ticket fechado → deletar o project file;
 
 ## Tickets ativos
 
-- [BT-72272 — CoveredCal Terminations](project_bt72272_coveredcal_terminations.md) — PR #2699 aguardando review; Fresh Eyes blocker (Switch case not started→null); lib #2741 já mergiada
 - [BT-73075 — UHC SAMx Renewal Modern](project_bt73075_uhc_samx_renewal.md) — seletor 'X' close icon fix; PR #2733 aberta; shadow com Oscar
 - [Hackathon — BenOps RCA Agent](project_hackathon_rca_agent.md) — agente Python autônomo, Benefits Hackathon junho 2026
 

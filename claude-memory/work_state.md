@@ -30,6 +30,7 @@ metadata:
 | #2705 | BT-72337/BT-72126 | BSCA_NewHireEnrollment — benefit_type ProperCase fix + lib 1.550.1 (7.0.1) | 2026-05-27 |
 | #2730 | BT-72337/BT-72410 | BSCA_GroupSubmissions_MemberLevel — Gusto_Benefits 1.550.3 (v6.2.2) | 2026-05-28 merged, em Prod |
 | #2741 | BT-72272 | Gusto_Benefits 1.550.8 — SearchForGroup CoveredCal race condition fix | 2026-06-02 |
+| #2699 | BT-72272 | CoveredCal_Terminations — Windows migration + StepForPolicyYear + future effective date fix (v6.0.5) | 2026-06-02 |
 | #2742 | BT-72297 | BCBS_IL_GroupSubmissions_MemberLevel_Modern — portalPlan regex + dep add skip fix (v2.1.2) | 2026-06-02 |
 | #2743 | BT-72297 | BCBS_TX_GroupSubmissions_MemberLevel_Modern — portalPlan regex + dep add skip fix (v2.1.3) | 2026-06-02 |
 | #2744 | BT-72297 | BCBS_TX_GroupSubmissions_MemberLevel_Modern — UiPath.System.Activities 25.4.2→25.10.5 (v2.1.4) | 2026-06-02 |
@@ -57,47 +58,9 @@ metadata:
 
 ---
 
-## BT-72272 — CoveredCal_Terminations (AGUARDANDO REVIEW)
+## BT-72272 — CoveredCal_Terminations (FECHADO — 2026-06-02)
 
-### PRs
-1. **PR #2741 — Library** — MERGED 2026-06-02 ✅
-2. **PR #2699 — Processo** `BT-72272-CoveredCal-Terminations-fix` → aguardando Buildkite + review
-
-### Estado do Staging (2026-06-02)
-- Library `Gusto_Benefits 1.550.8` publicada no Staging Libraries feed ✅
-- Processo `CoveredCal_Terminations 6.0.5` publicado no Staging ✅
-- Release atualizado para 6.0.5 ✅
-
-### Fixes entregues
-
-#### Processo (v6.0.5, branch BT-72272-CoveredCal-Terminations-fix)
-| Fix | Arquivo |
-|---|---|
-| Legacy→Windows migration, CloseAllApplications KillAllProcesses | `project.json`, `CloseAllApplications.xaml` |
-| Remove inOpenEnrollment guard + detect Account Termination Notice (future effective date EE) | `CancelCoverage.xaml` |
-| InterruptibleWhile (30s) para aguardar StepForPolicyYear ou dateTaken após date Next | `CancelCoverage.xaml` |
-| Seleciona policy year correto quando StepForPolicyYear aparece (EE com políticas em múltiplos anos) | `CancelCoverage.xaml` |
-| TimeoutMS dateTaken: 4s → 20s | `CancelCoverage.xaml` |
-| NavigateTo URL_SearchEmployerPage antes de SearchForGroup (resolve SPA race condition) | `ProcessTransaction.xaml` |
-| URL_SearchEmployerPage config key | `Data/config.json` |
-| Gusto_Benefits 1.532.5 → 1.550.8 | `project.json` |
-
-#### Library (v1.550.8, branch BT-72272-Gusto-Benefits-CoveredCal-SearchForGroup-fix)
-| Fix | Detalhe |
-|---|---|
-| SearchForGroup: NavigateTo #/app/search-customer | Remove RefreshBrowser+Click (race condition Angular SPA) |
-| TypeInto + Click 'search' movidos para dentro do BrowserScope | DOM fresco após navegação |
-| dependencylock.json: 1.550.3 → 1.550.8 | Necessário para Buildkite do processo passar |
-
-### Transações testadas no Staging
-| Transaction ID | Empresa | EE | Cenário | Resultado |
-|---|---|---|---|---|
-| 500R700000zOlkDIAS | BBH Global, Inc. | Kate Sexton | Policy year único | ✅ Pass |
-| 500R700000zN3WlIAK | Corridor Security Inc. | Scott Kahn + 3 deps | Multi-policy-year (StepForPolicyYear) | ✅ Pass |
-
-### Slack enviado
-- Canal `C0ANAPHL1NE` — @Oscar @Hari notificados sobre merge order (2026-06-02)
-- Canal `C0ANAPHL1NE` — follow-up com BCBS como prioridade 1, CoveredCal como prioridade 2 (2026-06-02)
+- PRs #2741 (lib 1.550.8) + #2699 (processo v6.0.5) mergiadas e pipeline passou ✅
 
 ---
 
