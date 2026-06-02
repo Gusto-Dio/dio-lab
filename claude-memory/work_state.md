@@ -7,7 +7,7 @@ metadata:
   originSessionId: e63eaeb7-a294-498d-8d21-15aa2451fdd6
 ---
 
-# Estado do trabalho — atualizado 2026-06-02 (sessão tarde)
+# Estado do trabalho — atualizado 2026-06-02 (sessão fim do dia)
 
 ---
 
@@ -74,8 +74,8 @@ metadata:
 ---
 
 ## BT-71897 — BCBS TX GroupSubmissions NewPlan
-- Branch: `BT-71897-BCBS-TX-GroupSubmissions-NewPlan`
-- Status: **On Hold**
+- Status: **Done** (mergeado por Oscar v2.0.4)
+- Observação 2026-06-02: bot com dificuldade de login (invalid access code) em runs via trigger; job manual com retentativas passou. Login usa `LoginToBCBSTXIL` de dentro da `Gusto_Benefits` (não da `Gusto_Benefits_BCBS-TX-IL`). DM enviado para Oscar perguntando se ele já está vendo e se quer apoio.
 
 ---
 
