@@ -32,6 +32,7 @@ metadata:
 | #2741 | BT-72272 | Gusto_Benefits 1.550.8 — SearchForGroup CoveredCal race condition fix | 2026-06-02 |
 | #2742 | BT-72297 | BCBS_IL_GroupSubmissions_MemberLevel_Modern — portalPlan regex + dep add skip fix (v2.1.2) | 2026-06-02 |
 | #2743 | BT-72297 | BCBS_TX_GroupSubmissions_MemberLevel_Modern — portalPlan regex + dep add skip fix (v2.1.3) | 2026-06-02 |
+| #2744 | BT-72297 | BCBS_TX_GroupSubmissions_MemberLevel_Modern — UiPath.System.Activities 25.4.2→25.10.5 (v2.1.4) | 2026-06-02 |
 
 ---
 
@@ -102,17 +103,22 @@ metadata:
 
 ## BT-72297 — BCBS_TX/IL GroupSubmissions MemberLevel
 
-- PRs #2742 (IL v2.1.2) e #2743 (TX v2.1.3) mergiadas em 2026-06-02
-- Fix: portalPlan regex + dep add silent skip
-- **PR #2744 — BCBS_TX v2.1.4** — aberta, aguardando review Ahsen
-  - Branch: `BT-72297-BCBS-TX-GroupSubmissions-system-activities-bump`
-  - Fix: `UiPath.System.Activities [25.4.2]` → `[25.10.5]` — deployment pipeline falhava com XamlObjectWriterException (RetryScope.LogRetriedExceptions ausente em 25.4.2)
+- PRs #2742 (IL v2.1.2), #2743 (TX v2.1.3), #2744 (TX v2.1.4) mergiadas em 2026-06-02 ✅
+- Deploy para produção confirmado — pipeline passou com sucesso em v2.1.4
+- Fix principal: portalPlan regex + dep add silent skip
+- Fix deploy: UiPath.System.Activities [25.4.2]→[25.10.5] (RetryScope.LogRetriedExceptions)
 
 ---
 
 ## BT-71897 — BCBS TX GroupSubmissions NewPlan
 - Branch: `BT-71897-BCBS-TX-GroupSubmissions-NewPlan`
 - Status: **On Hold**
+
+---
+
+## Backlog de pendências técnicas
+
+- **Anthem_NewHireEnrollment — waits entre páginas:** adicionar `WaitForReady` ou `UiElementExists` com retry em cada Invoke que transita de página (`EnterDependentsInformation.xaml` e outros). Risco de flapping em rede lenta. Retomar quando houver capacidade.
 
 ---
 
