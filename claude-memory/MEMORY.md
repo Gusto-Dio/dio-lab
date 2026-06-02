@@ -26,6 +26,7 @@ Ticket aberto → tem `project_*.md`. Ticket fechado → deletar o project file;
 
 ## Regras comportamentais
 
+- [Criação de tickets Jira](feedback_ticket_creation.md) — usar canal Slack C01CBJW8M16 com formato padrão; nunca criar direto via API
 - [XAML edit protocol](feedback_xaml_skill_protocol.md) — invocar uipath:uipath-rpa antes de qualquer edit em .xaml, sem exceção
 - [PR workflow](feedback_pr_workflow.md) — PR description/title sempre em inglês; nunca oferecer para aprovar PRs
 - [Buildkite — branch atrás do develop](feedback_buildkite_branch_behind_develop.md) — merge develop antes de PR; git diff usa origin/develop..HEAD
