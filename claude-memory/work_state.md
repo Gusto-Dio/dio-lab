@@ -74,11 +74,12 @@ metadata:
 ---
 
 ## BT-73253 — UHC_SamX_GroupSubmissions_Renewal_Modern
-- **Status: Em teste via Studio — aguardando resultado**
+- **Status: PR #2748 aberta — aguardando review**
 - Branch: `BT-73075-UHC-SamX-Renewal-debuggerapi-fix`
-- Fix 1 (DONE): `InteractionMode="DebuggerApi"` → `Simulate` em 11 ocorrências (4 arquivos)
+- PR: https://github.com/Gusto/biztech-uipath-rpa/pull/2748
+- Fix 1 (DONE): `InteractionMode="DebuggerApi"` → `Simulate` em 11 ocorrências (5 arquivos)
 - Fix 2 (DONE): RetryScope(5x,3s) + NCheckState(15s) + elementFound em 8 NClicks de navegação (root + Framework InitEnvironment.xaml)
-- Próximo: PR após teste Studio passar
+- Testado: 4 transações em Run mode, tenant prod — a0mR700000EhS4FIAV, a0mR700000EWPssIAH, a0mR700000ETE5zIAH, a0mR700000EiGFYIA3
 
 ---
 
