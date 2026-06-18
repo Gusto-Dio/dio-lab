@@ -16,8 +16,9 @@ metadata:
 | Ahsen Turksoy | U03E8KNP1JB | ahsen.turksoy@gusto.com | `ahsennur` | RPA Engineer |
 | Harinath Reddy Mora | U0B313V9XBJ | harinath.reddy@gusto.com | `harinathreddy-m` | RPA Engineer (novo membro) |
 
-## Canal do time
-- **C0ANAPHL1NE** — canal principal de comunicação do time RPA BenOps
+## Canais
+- **C0ANAPHL1NE** — canal principal do time RPA BenOps; usado para status updates de tickets (BT-XXXXX updates, Staging/Prod notifications)
+- **C01CBJW8M16** — canal de suporte/criação de tickets Jira (NÃO usar para status updates)
 
 ## Acesso ao repo privado Gusto-Dio/benops-rpa-skills
 - Colaboradores adicionados via GitHub web UI (Settings → Collaborators): `oscarmiza`, `ahsennur`, `harinathreddy-m` com permissão Read (2026-05-21)

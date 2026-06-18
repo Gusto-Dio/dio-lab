@@ -31,6 +31,8 @@ Usar `Invoke-RestMethod` do PowerShell — Python/urllib e `curl` são bloqueado
 
 **Header correto:** `X-UIPATH-OrganizationUnitId: <ID_NUMÉRICO>` — não usar `X-UIPATH-OrganizationUnitKey` (GUID).
 
+**Tenant correto para Staging:** `uip login tenant set "Staging"` — tenant ID `324912ec-2ae5-4a97-984e-059b065b392c`. Base URL: `https://cloud.uipath.com/gustoinc/Staging`. NUNCA usar o tenant Production para publicar em Staging.
+
 **Folder IDs Staging:**
 - `48382` — pasta `Benefits` (onde ficam as **releases** de CoveredCal, BCBS, etc.)
 - `946022` — pasta `Benefits/CarrierAutomation` (onde ficam os **packages** e **queues**)
@@ -44,6 +46,41 @@ Usar `Invoke-RestMethod` do PowerShell — Python/urllib e `curl` são bloqueado
 **Why:** Descoberto em 2026-06-02 ao publicar CoveredCal_Terminations e BCBS_IL/TX no Staging.
 
 **How to apply:** Sempre usar Invoke-RestMethod, header numérico, e verificar qual folder (48382 releases vs 946022 packages).
+
+---
+
+## Reconciliation queues — folder correto (Prod e Staging)
+
+As queues de Reconciliation (`BCBS_IL_Reconciliation`, `BCBS_TX_Reconciliation`, `Kaiser_Reconciliation`, etc.) ficam na pasta **Benefits**, NÃO em Benefits/CarrierAutomation.
+
+**Folder IDs Production:**
+- `46023` — Benefits (queues de Reconciliation ficam aqui)
+- `944168` — Benefits/CarrierAutomation (outros processos)
+
+**Folder IDs Staging:**
+- `48382` — Benefits (queues de Reconciliation ficam aqui)
+- `946022` — Benefits/CarrierAutomation (outros processos)
+
+**Why:** Descoberto em 2026-06-05 ao buscar BCBS_IL_Reconciliation — a queue não aparece em CarrierAutomation, apenas em Benefits.
+
+**How to apply:** Ao manipular QueueItems de Reconciliation, sempre usar o folder Benefits (46023/48382), não CarrierAutomation.
+
+---
+
+## QueueItems OData — Reference vs Key
+
+O "transaction ID" que aparece nos logs e na UI do Orchestrator é o campo **Reference**, não o **Key**.
+
+- `Key` (Edm.Guid) = identificador interno do item na queue
+- `Reference` (Edm.String) = identificador de negócio, visível na UI
+
+**Filtro correto por Reference:** `$filter=Reference eq '4dc61b59-63f8-40ff-a797-468c90f2d382'`
+
+**Busca alternativa quando só tem o Reference:** filtrar por `QueueDefinitionId eq <id>` + `$orderby=Id desc` e comparar `Reference` na lista retornada.
+
+**Why:** Em 2026-06-05, tentei filtrar por `Key eq <guid>` com o GUID fornecido pelo usuário — retornou 0 resultados sem erro. O GUID era o campo `Reference`. Bare GUID no filtro de Key retorna 0 silenciosamente (não lança erro).
+
+**How to apply:** Quando o usuário fornecer um transaction GUID do Orchestrator, assumir que é o `Reference`. Filtrar por Reference com aspas simples.
 
 ---
 
