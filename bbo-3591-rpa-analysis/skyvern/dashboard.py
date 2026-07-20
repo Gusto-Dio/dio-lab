@@ -22,22 +22,26 @@ CREDENTIAL_ID = "cred_553496609955839682"  # UiBank test login, stored in Skyver
 UIBANK_URL = "https://uibank.uipath.com/"
 
 DEFAULT_ITEMS = [
-    {"label": "Item 1", "amount": 5000, "term_months": 24, "purpose": "debt consolidation"},
-    {"label": "Item 2", "amount": 15000, "term_months": 36, "purpose": "home improvement"},
-    {"label": "Item 3", "amount": 30000, "term_months": 48, "purpose": "auto purchase"},
+    {"label": "Item 1", "email": "test.user1@example.com", "amount": 5000, "term_months": 24, "income": 60000, "age": 35},
+    {"label": "Item 2", "email": "test.user2@example.com", "amount": 15000, "term_months": 36, "income": 90000, "age": 42},
+    {"label": "Item 3", "email": "test.user3@example.com", "amount": 30000, "term_months": 48, "income": 120000, "age": 29},
 ]
 
+# The real form has exactly 5 fields: Email Address of Requester, Loan Amount Requested,
+# Loan Term, Current Yearly Income (Before Taxes), Age. No "purpose" field exists on the
+# form itself — it only shows up if the AI is asked for one, so it's dropped here.
 DEFAULT_INSTRUCTION = (
     "You are already logged in to UiBank. Navigate to the Loan Center and click "
-    "'Apply For A Loan'. Complete the loan application form using placeholder test data: "
-    "loan amount ${amount}, purpose '{purpose}', term {term_months} months if asked, and "
-    "reasonable fake placeholder values for any other required fields (income, employment, etc). "
-    "Do not use real personal or financial information. Submit the application. "
-    "The portal may either approve or reject/deny the application — both are valid outcomes, "
-    "do not treat a rejection as a task failure or retry the form. "
-    "COMPLETE as soon as the final result page is displayed (approved or rejected), and report "
-    "the confirmation/rejection message, loan/application ID if shown, APR if shown, and "
-    "approval status (approved or rejected)."
+    "'Apply For A Loan'. The form has exactly these fields — fill in exactly these values, "
+    "do not invent your own: Email Address of Requester = '{email}', Loan Amount Requested = {amount}, "
+    "Loan Term = {term_months} (enter this number as-is into the Loan Term field — it represents "
+    "a number of months, do not convert it to years), Current Yearly Income (Before Taxes) = {income}, "
+    "Age = {age}. Do not use real personal or financial information. Submit the application. "
+    "The portal may either approve or reject/deny the application, or show a validation error that "
+    "blocks submission — all are valid outcomes, do not retry with different values than the ones given above. "
+    "COMPLETE as soon as a final result page or a validation error is displayed, and report "
+    "the confirmation/rejection/error message, loan/application ID if shown, APR if shown, and "
+    "approval status (approved, rejected, or blocked by validation)."
 )
 
 
@@ -95,7 +99,8 @@ def run_skyvern_demo(items, instruction_template, log):
 
     results = []
     for item in items:
-        log(f"Submitting {item['label']}: ${item['amount']} / {item['term_months']}mo / {item['purpose']}")
+        log(f"Submitting {item['label']}: {item['email']} / ${item['amount']} / {item['term_months']}mo "
+            f"/ income ${item['income']} / age {item['age']}")
         prompt = instruction_template.format(**item)
         task_run = requests.post(
             f"{BASE_URL}/v1/run/tasks",
@@ -137,14 +142,17 @@ tool = st.selectbox("Tool", ["Skyvern (self-hosted, GPT-5.5)"], help="More tools
 st.subheader("Instruction given to the tool")
 st.caption(
     "This is the literal text sent to the AI for each item — no pre-recorded clicks, no selectors. "
-    "{amount}, {term_months}, and {purpose} get filled in per item below."
+    "{email}, {amount}, {term_months}, {income}, and {age} get filled in per item below — these are "
+    "the 5 actual fields on UiBank's loan form (Email, Loan Amount Requested, Loan Term, "
+    "Current Yearly Income, Age)."
 )
 instruction = st.text_area("Prompt template", value=DEFAULT_INSTRUCTION, height=160)
 
 st.subheader("Items to submit on the portal")
 st.caption(
     "Editable — change values, add rows, or set one up to be an exception case "
-    "(e.g. a very large amount) to see how the tool behaves when the portal doesn't approve it."
+    "(e.g. a negative amount, an age of 5, or an invalid email) to see how the tool behaves "
+    "when the portal rejects it or blocks submission with a validation error."
 )
 edited_items = st.data_editor(
     DEFAULT_ITEMS,
@@ -152,9 +160,11 @@ edited_items = st.data_editor(
     use_container_width=True,
     column_config={
         "label": st.column_config.TextColumn("Label"),
-        "amount": st.column_config.NumberColumn("Amount ($)", min_value=0, step=500),
-        "term_months": st.column_config.NumberColumn("Term (months)", min_value=1, step=6),
-        "purpose": st.column_config.TextColumn("Purpose"),
+        "email": st.column_config.TextColumn("Email"),
+        "amount": st.column_config.NumberColumn("Loan Amount ($)", step=500),
+        "term_months": st.column_config.NumberColumn("Term (months)", step=6),
+        "income": st.column_config.NumberColumn("Yearly Income ($)", step=5000),
+        "age": st.column_config.NumberColumn("Age", step=1),
     },
 )
 
@@ -191,9 +201,11 @@ if run_clicked:
                 result_label = "Completed (status unclear)"
             table_rows.append({
                 "Item": item["label"],
+                "Email": item["email"],
                 "Amount": f"${item['amount']}",
                 "Term": f"{item['term_months']}mo",
-                "Purpose": item["purpose"],
+                "Income": f"${item['income']}",
+                "Age": item["age"],
                 "Result": result_label,
                 "Environment": "Skyvern (self-hosted) + uibank.uipath.com",
                 "Time (s)": run["_elapsed_seconds"],

@@ -24,9 +24,9 @@ REPORT_DIR = Path(__file__).parent / "demo_reports"
 REPORT_DIR.mkdir(exist_ok=True)
 
 LOAN_ITEMS = [
-    {"label": "Item 1", "amount": 5000, "term_months": 24, "purpose": "debt consolidation"},
-    {"label": "Item 2", "amount": 15000, "term_months": 36, "purpose": "home improvement"},
-    {"label": "Item 3", "amount": 30000, "term_months": 48, "purpose": "auto purchase"},
+    {"label": "Item 1", "email": "test.user1@example.com", "amount": 5000, "term_months": 24, "income": 60000, "age": 35},
+    {"label": "Item 2", "email": "test.user2@example.com", "amount": 15000, "term_months": 36, "income": 90000, "age": 42},
+    {"label": "Item 3", "email": "test.user3@example.com", "amount": 30000, "term_months": 48, "income": 120000, "age": 29},
 ]
 
 CREDENTIAL_ID = "cred_553496609955839682"  # UiBank test login, stored in Skyvern's vault
@@ -84,15 +84,21 @@ def main():
 
     results = []
     for item in LOAN_ITEMS:
-        print(f"\nSubmitting {item['label']}: ${item['amount']} / {item['term_months']}mo / {item['purpose']}")
+        print(f"\nSubmitting {item['label']}: {item['email']} / ${item['amount']} / {item['term_months']}mo "
+              f"/ income ${item['income']} / age {item['age']}")
         prompt = (
             "You are already logged in to UiBank. Navigate to the Loan Center and click "
-            "'Apply For A Loan'. Complete the loan application form using placeholder test data: "
-            f"loan amount ${item['amount']}, purpose '{item['purpose']}', term {item['term_months']} months "
-            "if asked, and reasonable fake placeholder values for any other required fields "
-            "(income, employment, etc). Do not use real personal or financial information. "
-            "Submit the application. COMPLETE when the final confirmation/result page is displayed, "
-            "and report the confirmation message, loan/application ID, APR if shown, and approval status."
+            "'Apply For A Loan'. The form has exactly these fields — fill in exactly these values, "
+            f"do not invent your own: Email Address of Requester = '{item['email']}', "
+            f"Loan Amount Requested = {item['amount']}, Loan Term = {item['term_months']} (enter this "
+            "number as-is into the Loan Term field — it represents a number of months, do not convert "
+            f"it to years), Current Yearly Income (Before Taxes) = {item['income']}, Age = {item['age']}. "
+            "Do not use real personal or financial information. Submit the application. "
+            "The portal may either approve or reject/deny the application, or show a validation error "
+            "that blocks submission — all are valid outcomes, do not retry with different values than "
+            "the ones given above. COMPLETE as soon as a final result page or a validation error is "
+            "displayed, and report the confirmation/rejection/error message, loan/application ID if "
+            "shown, APR if shown, and approval status (approved, rejected, or blocked by validation)."
         )
         task_run = requests.post(
             f"{BASE_URL}/v1/run/tasks",
@@ -136,8 +142,8 @@ def write_report(run_started_at, login_result, results):
     lines.append(f"Login: {login_result['status']} in {login_result['_elapsed_seconds']}s "
                  f"({login_result.get('step_count')} steps)")
     lines.append("")
-    lines.append("| Item | Amount | Term | Purpose | Status | Steps | Time (s) | Result |")
-    lines.append("|---|---|---|---|---|---|---|---|")
+    lines.append("| Item | Email | Amount | Term | Income | Age | Status | Steps | Time (s) | Result |")
+    lines.append("|---|---|---|---|---|---|---|---|---|---|")
     for r in results:
         item, run = r["item"], r["run"]
         out = run.get("output") or {}
@@ -147,15 +153,17 @@ def write_report(run_started_at, login_result, results):
             result_str = f"{result_str} (loan ID: {loan_id})"
         result_str = result_str.replace("|", "/").replace("\n", " ")
         lines.append(
-            f"| {item['label']} | ${item['amount']} | {item['term_months']}mo | {item['purpose']} | "
-            f"{run['status']} | {run.get('step_count')} | {run['_elapsed_seconds']} | {result_str} |"
+            f"| {item['label']} | {item['email']} | ${item['amount']} | {item['term_months']}mo | "
+            f"${item['income']} | {item['age']} | {run['status']} | {run.get('step_count')} | "
+            f"{run['_elapsed_seconds']} | {result_str} |"
         )
     lines.append("")
     lines.append("## Details per item")
     for r in results:
         item, run = r["item"], r["run"]
         out = run.get("output") or {}
-        lines.append(f"### {item['label']} (${item['amount']}, {item['term_months']}mo, {item['purpose']})")
+        lines.append(f"### {item['label']} (${item['amount']}, {item['term_months']}mo, "
+                      f"income ${item['income']}, age {item['age']})")
         lines.append(f"- run_id: `{run['run_id']}`")
         lines.append(f"- status: **{run['status']}**")
         loan_id = out.get("loan_id") or out.get("application_id") or out.get("reference_id") or out.get("loan_or_application_id")
